@@ -79,22 +79,19 @@ class Snake:
         if self.facing == 'down':
             self.position[1] += 1
         self.segments.insert(0, list(self.position))
-
-
         
 class Strawberry():
     def __init__(self, settings):
         self.settings = settings
         
         self.style = str(random.randint(1, 8))
-        self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')
+        self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')        
         self.initialize()
         
     def random_pos(self, snake):
         self.style = str(random.randint(1, 8))
-        self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')
-        eat_sound = pygame.mixer.Sound('./sound/eat.wav')
-        pygame.mixer.Sound.play(eat_sound)
+        self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')                
+        
         self.position[0] = random.randint(0, self.settings.width-1)
         self.position[1] = random.randint(0, self.settings.height-1)
 
