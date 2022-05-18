@@ -10,6 +10,7 @@ from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE
 from pygame.locals import QUIT
 
 from game import Game
+from krusty import NGame, no_endGame
 
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
@@ -24,16 +25,19 @@ yellow = pygame.Color(255, 205, 0)
 bright_yellow = pygame.Color(255, 255, 0)
 
 game = Game()
+ngame = NGame()
+no_end = no_endGame()
 rect_len = game.settings.rect_len
+snake = ngame.snake
 snake1 = game.snake1
 snake2 = game.snake2
+snake4 = no_end.snake
 pygame.init()
 fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((game.settings.width * 15, game.settings.height * 15))
 pygame.display.set_caption('Gluttonous')
 
 crash_sound = pygame.mixer.Sound('./sound/crash.wav')
-
 
 def text_objects(text, font, color=black):
     text_surface = font.render(text, True, color)
@@ -90,13 +94,60 @@ def initial_interface():
         message_display('Gluttonous', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
 
         button('Go!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
+        button('twins!', 175, 240, 80, 40, green, bright_green, dgame_loop, 'human')
+        button('Reverse!', 175, 300, 80, 40, green, bright_green, rgame_loop, 'human')
         button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
 
-
 def game_loop(player, fps=10):
+    ngame.restart_game()
+
+    while not ngame.game_end():
+
+        pygame.event.pump()
+
+        move = krusty_human_move()
+        fps = 5
+
+        ngame.do_move(move)
+
+        screen.fill(black)
+
+        ngame.snake.blit(rect_len, screen)
+        ngame.strawberry.blit(screen)
+        ngame.blit_score(white, screen)
+
+        pygame.display.flip()
+
+        fpsClock.tick(fps)
+
+    crash()
+
+def rgame_loop(player, fps=10):
+    no_end.restart_game()
+    while not no_end.game_end():
+
+        pygame.event.pump()
+
+        move = no_end_human_move()
+        fps = 5
+
+        no_end.do_move(move)
+
+        screen.fill(black)
+
+        no_end.snake.blit(rect_len, screen)
+        no_end.strawberry.blit(screen)
+        no_end.blit_score(white, screen)
+
+        pygame.display.flip()
+
+        fpsClock.tick(fps)
+
+
+def dgame_loop(player, fps=10):
     game.restart_game()
 
     while not game.game_end():
@@ -142,9 +193,53 @@ def human_move():
                 pygame.event.post(pygame.event.Event(QUIT))
 
     move = game.direction_to_int(direction)
+
     return move
 
+def krusty_human_move():
+    direction = snake.facing
 
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+
+        elif event.type == KEYDOWN:
+            if event.key == K_RIGHT or event.key == ord('d'):
+                direction = 'right'
+            if event.key == K_LEFT or event.key == ord('a'):
+                direction = 'left'
+            if event.key == K_UP or event.key == ord('w'):
+                direction = 'up'
+            if event.key == K_DOWN or event.key == ord('s'):
+                direction = 'down'
+            if event.key == K_ESCAPE:
+                pygame.event.post(pygame.event.Event(QUIT))
+
+    move = ngame.direction_to_int(direction)
+
+    return move
+def no_end_human_move():
+    direction = snake4.facing
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+
+        elif event.type == KEYDOWN:
+            if event.key == K_RIGHT or event.key == ord('d'):
+                direction = 'right'
+            if event.key == K_LEFT or event.key == ord('a'):
+                direction = 'left'
+            if event.key == K_UP or event.key == ord('w'):
+                direction = 'up'
+            if event.key == K_DOWN or event.key == ord('s'):
+                direction = 'down'
+            if event.key == K_ESCAPE:
+                pygame.event.post(pygame.event.Event(QUIT))
+
+    move = no_end.direction_to_int(direction)
+
+    return move
 if __name__ == "__main__":
     initial_interface()
 
