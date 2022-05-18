@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed May 16 15:22:20 2018
-
 @author: zou
 """
 
@@ -26,7 +25,8 @@ bright_yellow = pygame.Color(255, 255, 0)
 
 game = Game()
 rect_len = game.settings.rect_len
-snake = game.snake
+snake1 = game.snake1
+snake2 = game.snake2
 pygame.init()
 fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((game.settings.width * 15, game.settings.height * 15))
@@ -110,7 +110,8 @@ def game_loop(player, fps=10):
 
         screen.fill(black)
 
-        game.snake.blit(rect_len, screen)
+        game.snake1.blit(rect_len, screen)
+        game.snake2.blit(rect_len, screen)
         game.strawberry.blit(screen)
         game.blit_score(white, screen)
 
@@ -122,7 +123,7 @@ def game_loop(player, fps=10):
 
 
 def human_move():
-    direction = snake.facing
+    direction = snake1.facing
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -146,3 +147,5 @@ def human_move():
 
 if __name__ == "__main__":
     initial_interface()
+
+
